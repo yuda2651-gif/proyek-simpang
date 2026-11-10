@@ -1,0 +1,68 @@
+/* Tautan biasa tetap bekerja tanpa JavaScript. Browser modern memindahkan elemen yang namanya sama. */
+@view-transition {
+  navigation: auto;
+}
+.brand {
+  view-transition-name: merk-simpang;
+}
+nav [aria-current='page'] {
+  view-transition-name: menu-aktif;
+}
+main h1 {
+  view-transition-name: judul-halaman;
+}
+.board,
+.sim-board,
+.diagram-interaktif {
+  view-transition-name: denah-utama;
+}
+::view-transition-group(merk-simpang),
+::view-transition-group(menu-aktif),
+::view-transition-group(judul-halaman),
+::view-transition-group(denah-utama) {
+  animation-duration: 340ms;
+  animation-timing-function: cubic-bezier(0.2, 0.75, 0.24, 1);
+}
+::view-transition-old(root) {
+  animation: menu-hilang 165ms ease-out both;
+}
+::view-transition-new(root) {
+  animation: menu-tampil 250ms ease-out both;
+}
+@keyframes menu-hilang {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+@keyframes menu-tampil {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.menu-keluar main {
+  animation: menu-hilang 135ms ease-in forwards;
+}
+.menu-masuk main {
+  animation: menu-tampil 210ms ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+  .menu-masuk main,
+  .menu-keluar main {
+    animation: none;
+  }
+}

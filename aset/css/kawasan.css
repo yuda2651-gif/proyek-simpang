@@ -1,0 +1,373 @@
+:root {
+  --alley: #c6cbb8;
+  --pond: #99beb7;
+  --pond-ripple: #d3e6dd;
+  --dome: #7faba0;
+  --dome-line: #63978b;
+  --court-green: #a0b5a1;
+  --bed: #b9a68b;
+  --pju-warm: #ffe2a1;
+  --pju-bulb: #c4cec2;
+}
+:root[data-sky='sore'] {
+  --pju-bulb: #ffe1a6;
+  --pju-warm: #ffdea0;
+  --pond: #a8bab0;
+  --court-green: #acb39a;
+}
+:root[data-sky='malam'] {
+  --pju-bulb: #fff0bf;
+  --pju-warm: #ffe19a;
+  --pond: #829f9e;
+  --alley: #9eaa9d;
+  --court-green: #91a595;
+  --bed: #a99b89;
+  --dome: #7b9993;
+}
+.atlas-slot {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.7;
+  overflow: hidden;
+  min-height: 0;
+  background: var(--sky-bottom);
+}
+.sim-board .atlas-slot {
+  aspect-ratio: 1.51;
+}
+.atlas-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  contain: layout paint;
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  outline-offset: -4px !important;
+}
+.atlas-viewport.atlas-besar {
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+.atlas-viewport.atlas-drag,
+.atlas-drag * {
+  cursor: grabbing !important;
+}
+.atlas-stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+  isolation: isolate;
+  contain: layout paint;
+}
+.atlas-layer,
+.atlas-base,
+.atlas-cuaca,
+.atlas-hud {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.atlas-layer {
+  display: block;
+  pointer-events: none;
+}
+.atlas-base,
+.atlas-detail {
+  display: block;
+  pointer-events: none;
+}
+.atlas-detail {
+  position: absolute;
+}
+.atlas-ground,
+.atlas-upper,
+.atlas-pelaku,
+.atlas-info {
+  transform: translateZ(0);
+  contain: paint;
+}
+.atlas-info [data-peta-jalan] {
+  pointer-events: all;
+}
+.atlas-cuaca,
+.atlas-hud {
+  pointer-events: none;
+}
+.atlas-hud .map-hud {
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--muted);
+}
+.atlas-hud .compass {
+  filter: none;
+  color: var(--accent-deep);
+  background: var(--surface);
+  border-radius: 4px;
+  padding: 2px;
+}
+:root[data-sky='malam'] .atlas-hud .map-hud,
+:root[data-sky='malam'] .atlas-hud .compass {
+  color: var(--accent-deep);
+}
+.atlas-cuaca {
+  overflow: hidden;
+}
+:root[data-cuaca='hujan'] .atlas-cuaca::after {
+  content: '';
+  position: absolute;
+  inset: -24px;
+  opacity: 0.22;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='36'%3E%3Cpath d='m7 7-2 5m24 12-2 5' fill='none' stroke='%23768791' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  animation: rintik-atlas 1.1s linear infinite;
+}
+@keyframes rintik-atlas {
+  to {
+    transform: translate(-12px, 36px);
+  }
+}
+:root[data-cuaca='kabut'] .atlas-cuaca {
+  background: var(--sky-fog);
+  opacity: 0.13;
+}
+.atlas-interaksi .atlas-cuaca::after,
+:root[data-tampilan-jeda='ya'] .atlas-cuaca::after {
+  animation-play-state: paused !important;
+}
+.atlas-tools {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 9px;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+}
+.alat-baris,
+.alat-skala,
+.alat-petak {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.atlas-tools button,
+.atlas-tools select,
+.tombol-denah-besar,
+.tutup-atlas {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--accent-deep);
+  min-height: 34px;
+  padding: 5px 9px;
+  font: 500 0.82rem var(--sans);
+}
+.atlas-tools button:hover,
+.tombol-denah-besar:hover,
+.tutup-atlas:hover {
+  background: var(--accent-wash);
+}
+.atlas-tools button:disabled {
+  opacity: 0.45;
+}
+.atlas-tools select:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.alat-skala {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  gap: 0;
+}
+.alat-skala button {
+  font: 500 17px var(--sans);
+  border: 0;
+  min-width: 30px;
+  min-height: 31px;
+  padding: 0;
+}
+.alat-skala output {
+  min-width: 41px;
+  text-align: center;
+  font: 500 10px var(--mono);
+  color: var(--muted);
+}
+.alat-petak {
+  font-size: 0.8rem;
+  font-weight: 600;
+  gap: 7px;
+}
+.alat-petak select {
+  max-width: 170px;
+}
+.atlas-help {
+  padding: 0 15px 12px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.tombol-denah-besar,
+.tutup-atlas {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  white-space: nowrap;
+}
+.tombol-denah-besar .icon,
+.tutup-atlas .icon {
+  width: 15px;
+  height: 15px;
+}
+.pju-status i {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--strong-line);
+  border-radius: 50%;
+  background: var(--line);
+}
+:root:is([data-sky='sore'], [data-sky='malam']) .pju-status i {
+  background: var(--lamp-yellow);
+  border-color: var(--sign-ochre);
+}
+.preview-map canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+body[data-page='beranda'] [data-slot-alat='utama'] {
+  display: none;
+}
+.atlas-dialog {
+  width: min(1280px, 96vw);
+  max-width: 96vw;
+  overflow: auto;
+  overscroll-behavior: contain;
+  max-height: 95dvh;
+}
+.atlas-dialog .atlas-slot {
+  aspect-ratio: auto;
+  height: clamp(155px, 64dvh, 740px);
+}
+.atlas-dialog .dialog-info {
+  font-size: 0.77rem;
+  color: var(--muted);
+}
+.atlas-dialog .atlas-tools {
+  border-top: 1px solid var(--line);
+}
+html:has(.atlas-dialog[open]) {
+  overflow: hidden;
+}
+@media (max-width: 680px) {
+  .sim-board .atlas-slot {
+    aspect-ratio: 1.22;
+  }
+  .atlas-help {
+    font-size: 0.74rem;
+  }
+  .atlas-tools,
+  .atlas-dialog .atlas-tools {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .alat-petak {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .alat-petak select {
+    flex: 1;
+    max-width: none;
+  }
+  .atlas-tools button {
+    min-height: 36px;
+  }
+  .alat-baris {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .tombol-denah-besar {
+    font-size: 0.75rem;
+  }
+  .atlas-dialog .atlas-slot {
+    height: clamp(115px, 57dvh, 660px);
+  }
+}
+@media (max-height: 440px) {
+  .atlas-dialog .atlas-slot {
+    height: 48dvh;
+  }
+  .atlas-dialog .dialog-bar,
+  .atlas-dialog .atlas-tools {
+    padding-block: 4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .atlas-cuaca::after {
+    animation: none !important;
+  }
+}
+
+.atlas-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.atlas-plaque {
+  display: inline-flex;
+  position: absolute;
+  left: 0;
+  top: 0;
+  align-items: center;
+  gap: 5px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--strong-line);
+  border-radius: 5px;
+  padding: 2px 5px;
+  white-space: nowrap;
+  line-height: 1;
+  justify-content: center;
+  font: 600 11px var(--sans);
+}
+button.atlas-plaque {
+  pointer-events: auto;
+  cursor: pointer;
+}
+.atlas-plaque b {
+  font: 500 10px var(--mono);
+  border-right: 1px solid var(--rule);
+  padding-right: 5px;
+  color: var(--accent-deep);
+}
+.atlas-plaque[aria-pressed='true'],
+button.atlas-plaque:hover {
+  outline: 1.5px solid var(--accent);
+  outline-offset: 0;
+}
+@media (max-width: 600px) {
+  .atlas-plaque {
+    font-size: 9px;
+    gap: 3px;
+  }
+  .atlas-plaque b {
+    font-size: 9px;
+    padding-right: 3px;
+  }
+}
+
+.atlas-langit {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
