@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="simpang-mode" content="demo" />
+    <title>Panel operator · Simpang</title>
+    <link rel="stylesheet" href="aset/css/font.css" />
+    <link rel="stylesheet" href="aset/css/dasar.css" />
+    <link rel="stylesheet" href="aset/css/panel.css" />
+    <link rel="stylesheet" href="aset/css/lingkungan.css" />
+    <link rel="stylesheet" href="aset/css/interaksi.css" />
+    <link rel="stylesheet" href="aset/css/navigasi.css" />
+    <link rel="canonical" href="https://yudawhyusimpang.my.id/hmi.html" />
+  </head>
+  <body data-page="hmi">
+    <a class="skip" href="#utama">Lewati navigasi</a>
+    <svg
+      class="sprites"
+      aria-hidden="true"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs id="svg-defs"></defs>
+    </svg>
+    <header class="topbar">
+      <div class="wrap nav-wrap">
+        <a class="brand" href="index.html#beranda" aria-label="Simpang, kembali ke beranda">
+          <svg class="brand-mark" aria-hidden="true" viewbox="0 0 36 36">
+            <use href="#brand"></use>
+          </svg>
+          <span class="wordmark">Simpang</span>
+        </a>
+        <button
+          class="menu-button"
+          type="button"
+          id="menu-button"
+          aria-label="Buka menu"
+          aria-expanded="false"
+          aria-controls="menu-panel"
+        >
+          <svg class="icon" aria-hidden="true"><use href="#i-menu"></use></svg>
+        </button>
+        <div class="nav-panel" id="menu-panel">
+          <div class="nav-clip">
+            <nav aria-label="Navigasi utama">
+              <a href="index.html#beranda">Beranda</a>
+              <a href="simulator.html">
+                <i class="dot" aria-hidden="true"></i>
+                Simulator
+              </a>
+              <a href="hmi.html" aria-current="page">Panel Operator (HMI)</a>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main id="utama" class="wrap" tabindex="-1">
+      <header class="ops-head">
+        <div>
+          <h1>Panel operator</h1>
+          <p>Atur giliran kendaraan dan penyeberang dari satu panel.</p>
+        </div>
+        <div class="top-context">
+          <span class="time-wib" data-env="clock">— WIB</span>
+          <span class="connection" aria-live="polite" id="connection">Menghubungkan…</span>
+        </div>
+      </header>
+      <form class="auth" id="unlock" hidden>
+        <label for="code">Kode operator dari terminal server</label>
+        <div class="auth-controls">
+          <input
+            type="password"
+            id="code"
+            required
+            autocomplete="off"
+            maxlength="128"
+            spellcheck="false"
+          />
+          <button type="submit" class="action secondary" id="auth-button">Buka kendali</button>
+        </div>
+        <span role="status" class="feedback" id="login-status"></span>
+      </form>
+      <div class="desk">
+        <div class="desk-left">
+          <section class="console" aria-label="Kendali lampu">
+            <div class="console-top">
+              <span class="console-mode">
+                <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                  <use id="mode-icon" href="#i-auto"></use>
+                </svg>
+                <span id="mode-label">Mode otomatis</span>
+              </span>
+              <span class="run-state" id="run-state">Menunggu data</span>
+            </div>
+            <div class="console-main">
+              <div class="baca-fase">
+                <div class="signal-summary">
+                  <i class="state-dot" id="state-dot" aria-hidden="true"></i>
+                  <strong class="phase-title" id="phase-label" aria-live="polite">
+                    Menunggu data
+                  </strong>
+                </div>
+                <p class="route-pair" id="active-roads"></p>
+                <span class="kicker">Sisa waktu fase</span>
+                <div class="phase-value" role="timer" aria-live="off">
+                  <strong id="count">—</strong>
+                  <small id="unit-count">detik</small>
+                </div>
+              </div>
+              <div class="operator-buttons">
+                <button type="button" disabled class="action primary" id="start">
+                  <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                    <use href="#i-play"></use>
+                  </svg>
+                  Mulai
+                </button>
+                <button type="button" disabled class="action secondary" id="stop">
+                  <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                    <use href="#i-stop"></use>
+                  </svg>
+                  Hentikan
+                </button>
+              </div>
+              <figure class="diagram-interaktif">
+                <svg
+                  id="diagram-hmi"
+                  class="mini-map"
+                  viewbox="0 0 260 218"
+                  role="group"
+                  aria-label="Pilih jalan pada denah HMI"
+                >
+                  <rect width="260" height="218" rx="12" fill="var(--panel-grid)"></rect>
+                  <path
+                    d="M104 5h52v77h99v52h-99v79h-52v-79H5V82h99Z"
+                    fill="var(--panel-road)"
+                  ></path>
+                  <path
+                    d="M130 9v60m0 78v62M10 108h82m78 0h80"
+                    fill="none"
+                    stroke="var(--panel-line)"
+                    stroke-width="1.6"
+                    stroke-dasharray="4 5"
+                  ></path>
+                  <g
+                    transform="translate(105 74) rotate(0)"
+                    fill="var(--panel-muted)"
+                    opacity=".66"
+                  >
+                    <rect x="2" width="4" height="6"></rect>
+                    <rect x="10" width="4" height="6"></rect>
+                    <rect x="18" width="4" height="6"></rect>
+                    <rect x="26" width="4" height="6"></rect>
+                    <rect x="34" width="4" height="6"></rect>
+                    <rect x="42" width="4" height="6"></rect>
+                  </g>
+                  <g
+                    transform="translate(166 83) rotate(90)"
+                    fill="var(--panel-muted)"
+                    opacity=".66"
+                  >
+                    <rect x="2" width="4" height="6"></rect>
+                    <rect x="10" width="4" height="6"></rect>
+                    <rect x="18" width="4" height="6"></rect>
+                    <rect x="26" width="4" height="6"></rect>
+                    <rect x="34" width="4" height="6"></rect>
+                    <rect x="42" width="4" height="6"></rect>
+                  </g>
+                  <g
+                    transform="translate(155 142) rotate(180)"
+                    fill="var(--panel-muted)"
+                    opacity=".66"
+                  >
+                    <rect x="2" width="4" height="6"></rect>
+                    <rect x="10" width="4" height="6"></rect>
+                    <rect x="18" width="4" height="6"></rect>
+                    <rect x="26" width="4" height="6"></rect>
+                    <rect x="34" width="4" height="6"></rect>
+                    <rect x="42" width="4" height="6"></rect>
+                  </g>
+                  <g
+                    transform="translate(94 133) rotate(270)"
+                    fill="var(--panel-muted)"
+                    opacity=".66"
+                  >
+                    <rect x="2" width="4" height="6"></rect>
+                    <rect x="10" width="4" height="6"></rect>
+                    <rect x="18" width="4" height="6"></rect>
+                    <rect x="26" width="4" height="6"></rect>
+                    <rect x="34" width="4" height="6"></rect>
+                    <rect x="42" width="4" height="6"></rect>
+                  </g>
+                  <g
+                    class="lengan-hmi"
+                    data-mini-road="U"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Pilih Utara, Jl. Kenanga"
+                    aria-pressed="false"
+                  >
+                    <rect
+                      class="sensor-jalan"
+                      x="92"
+                      y="4"
+                      width="77"
+                      height="66"
+                      rx="8"
+                    ></rect>
+                    <text x="130" y="21" class="teks-lengan" text-anchor="middle">UTARA</text>
+                    <path
+                      class="dir-line"
+                      d="M142 28v28m-6-6 6 6 6-6"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2.5"
+                    ></path>
+                    <circle cx="146" cy="67" r="7" fill="var(--panel-dark)"></circle>
+                    <circle class="lane-lit" cx="146" cy="67" r="4"></circle>
+                  </g>
+                  <g
+                    class="lengan-hmi"
+                    data-mini-road="T"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Pilih Timur, Jl. Angsana"
+                    aria-pressed="false"
+                  >
+                    <rect
+                      class="sensor-jalan"
+                      x="171"
+                      y="75"
+                      width="86"
+                      height="65"
+                      rx="8"
+                    ></rect>
+                    <text x="217" y="91" class="teks-lengan" text-anchor="middle">TIMUR</text>
+                    <path
+                      class="dir-line"
+                      d="M238 119h-38m6-6-6 6 6 6"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2.5"
+                    ></path>
+                    <circle cx="172" cy="122" r="7" fill="var(--panel-dark)"></circle>
+                    <circle class="lane-lit" cx="172" cy="122" r="4"></circle>
+                  </g>
+                  <g
+                    class="lengan-hmi"
+                    data-mini-road="S"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Pilih Selatan, Jl. Tanjung"
+                    aria-pressed="false"
+                  >
+                    <rect
+                      class="sensor-jalan"
+                      x="92"
+                      y="146"
+                      width="77"
+                      height="68"
+                      rx="8"
+                    ></rect>
+                    <text x="130" y="203" class="teks-lengan" text-anchor="middle">
+                      SELATAN
+                    </text>
+                    <path
+                      class="dir-line"
+                      d="M117 191v-28m-6 6 6-6 6 6"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2.5"
+                    ></path>
+                    <circle cx="113" cy="150" r="7" fill="var(--panel-dark)"></circle>
+                    <circle class="lane-lit" cx="113" cy="150" r="4"></circle>
+                  </g>
+                  <g
+                    class="lengan-hmi"
+                    data-mini-road="B"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Pilih Barat, Jl. Cempaka"
+                    aria-pressed="false"
+                  >
+                    <rect
+                      class="sensor-jalan"
+                      x="3"
+                      y="76"
+                      width="86"
+                      height="65"
+                      rx="8"
+                    ></rect>
+                    <text x="46" y="92" class="teks-lengan" text-anchor="middle">BARAT</text>
+                    <path
+                      class="dir-line"
+                      d="M21 97h38m-6-6 6 6-6 6"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2.5"
+                    ></path>
+                    <circle cx="87" cy="93" r="7" fill="var(--panel-dark)"></circle>
+                    <circle class="lane-lit" cx="87" cy="93" r="4"></circle>
+                  </g>
+                </svg>
+                <figcaption id="diagram-hint">Pilih ruas jalan pada denah.</figcaption>
+              </figure>
+            </div>
+            <span class="feedback" role="status" id="notice"></span>
+            <div class="console-footer">
+              <a class="page-link" href="simulator.html" target="_blank" rel="noopener">
+                Lihat simulator
+                <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                  <use href="#i-diagonal"></use>
+                </svg>
+              </a>
+            </div>
+          </section>
+          <section class="sequence" aria-label="Urutan fase">
+            <div class="sequence-top">
+              <h2>Urutan fase</h2>
+              <small id="seq-meta">Siklus otomatis</small>
+            </div>
+            <div class="phase-track" aria-hidden="true">
+              <i class="green"></i>
+              <i class="amber"></i>
+              <i class="all-red"></i>
+              <i class="green"></i>
+              <i class="amber"></i>
+              <i class="all-red"></i>
+              <i class="green"></i>
+              <i class="amber"></i>
+              <i class="all-red"></i>
+              <i class="green"></i>
+              <i class="amber"></i>
+              <i class="all-red"></i>
+              <i class="walk"></i>
+              <i class="all-red"></i>
+            </div>
+            <p id="seq-text">Utara → Timur → Selatan → Barat → Penyeberang</p>
+            <div class="lamp-bank" aria-label="Lampu per arah">
+              <div class="lamp-unit" data-output="U">
+                <strong>Utara</strong>
+                <span class="lamp-case" aria-hidden="true">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </span>
+                <small>—</small>
+              </div>
+              <div class="lamp-unit" data-output="T">
+                <strong>Timur</strong>
+                <span class="lamp-case" aria-hidden="true">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </span>
+                <small>—</small>
+              </div>
+              <div class="lamp-unit" data-output="S">
+                <strong>Selatan</strong>
+                <span class="lamp-case" aria-hidden="true">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </span>
+                <small>—</small>
+              </div>
+              <div class="lamp-unit" data-output="B">
+                <strong>Barat</strong>
+                <span class="lamp-case" aria-hidden="true">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </span>
+                <small>—</small>
+              </div>
+            </div>
+          </section>
+        </div>
+        <section class="pane duration-form" aria-labelledby="mode-title">
+          <h2 id="mode-title">Mode kendali</h2>
+          <div class="mode-picks" role="group" aria-label="Mode lampu">
+            <button type="button" data-mode="otomatis" aria-pressed="false" disabled>
+              <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                <use href="#i-auto"></use>
+              </svg>
+              Otomatis
+            </button>
+            <button type="button" data-mode="manual" aria-pressed="false" disabled>
+              <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                <use href="#i-manual"></use>
+              </svg>
+              Manual
+            </button>
+          </div>
+          <p class="mode-copy" id="mode-copy"></p>
+          <div
+            id="manual-pad"
+            class="manual-pad"
+            role="group"
+            aria-label="Beri giliran satu ruas"
+            hidden
+          >
+            <button
+              type="button"
+              class="manual-pick"
+              data-fase="U"
+              aria-pressed="false"
+              disabled
+            >
+              <span class="huruf-ruas">U</span>
+              <span>
+                <strong>Utara</strong>
+                <small>Jl. Kenanga</small>
+              </span>
+            </button>
+            <button
+              type="button"
+              class="manual-pick"
+              data-fase="T"
+              aria-pressed="false"
+              disabled
+            >
+              <span class="huruf-ruas">T</span>
+              <span>
+                <strong>Timur</strong>
+                <small>Jl. Angsana</small>
+              </span>
+            </button>
+            <button
+              type="button"
+              class="manual-pick"
+              data-fase="S"
+              aria-pressed="false"
+              disabled
+            >
+              <span class="huruf-ruas">S</span>
+              <span>
+                <strong>Selatan</strong>
+                <small>Jl. Tanjung</small>
+              </span>
+            </button>
+            <button
+              type="button"
+              class="manual-pick"
+              data-fase="B"
+              aria-pressed="false"
+              disabled
+            >
+              <span class="huruf-ruas">B</span>
+              <span>
+                <strong>Barat</strong>
+                <small>Jl. Cempaka</small>
+              </span>
+            </button>
+            <button
+              type="button"
+              class="manual-pick pejalan-pick"
+              data-fase="P"
+              aria-pressed="false"
+              disabled
+            >
+              <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                <use href="#i-walk"></use>
+              </svg>
+              Penyeberang jalan
+            </button>
+          </div>
+          <p id="transition-note" class="mode-note" role="status"></p>
+          <details class="timing-fold" open>
+            <summary>Durasi fase</summary>
+            <form id="settings">
+              <p id="setting-note"></p>
+              <fieldset id="timings" disabled aria-label="Durasi lampu dalam detik">
+                <div class="timing-jalan">
+                  <div class="durasi-item">
+                    <label for="hijau-U">Hijau Utara</label>
+                    <small>Jl. Kenanga</small>
+                    <input
+                      type="number"
+                      id="hijau-U"
+                      data-hijau="U"
+                      inputmode="numeric"
+                      value="12"
+                      min="3"
+                      max="120"
+                      step="1"
+                      required
+                      aria-label="Durasi hijau Utara dalam detik"
+                    />
+                  </div>
+                  <div class="durasi-item">
+                    <label for="hijau-T">Hijau Timur</label>
+                    <small>Jl. Angsana</small>
+                    <input
+                      type="number"
+                      id="hijau-T"
+                      data-hijau="T"
+                      inputmode="numeric"
+                      value="12"
+                      min="3"
+                      max="120"
+                      step="1"
+                      required
+                      aria-label="Durasi hijau Timur dalam detik"
+                    />
+                  </div>
+                  <div class="durasi-item">
+                    <label for="hijau-S">Hijau Selatan</label>
+                    <small>Jl. Tanjung</small>
+                    <input
+                      type="number"
+                      id="hijau-S"
+                      data-hijau="S"
+                      inputmode="numeric"
+                      value="12"
+                      min="3"
+                      max="120"
+                      step="1"
+                      required
+                      aria-label="Durasi hijau Selatan dalam detik"
+                    />
+                  </div>
+                  <div class="durasi-item">
+                    <label for="hijau-B">Hijau Barat</label>
+                    <small>Jl. Cempaka</small>
+                    <input
+                      type="number"
+                      id="hijau-B"
+                      data-hijau="B"
+                      inputmode="numeric"
+                      value="12"
+                      min="3"
+                      max="120"
+                      step="1"
+                      required
+                      aria-label="Durasi hijau Barat dalam detik"
+                    />
+                  </div>
+                </div>
+                <small class="batas-hijau">Hijau per jalan: 3–120 detik.</small>
+                <div class="setting-row">
+                  <div>
+                    <label for="kuning">Kuning</label>
+                    <small id="hint-kuning">3–15 detik</small>
+                  </div>
+                  <input
+                    required
+                    type="number"
+                    inputmode="numeric"
+                    step="1"
+                    min="3"
+                    max="15"
+                    value="3"
+                    id="kuning"
+                    aria-describedby="hint-kuning"
+                  />
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <label for="jeda">Jeda semua merah</label>
+                    <small id="hint-jeda">2–20 detik</small>
+                  </div>
+                  <input
+                    required
+                    type="number"
+                    inputmode="numeric"
+                    step="1"
+                    min="2"
+                    max="20"
+                    value="2"
+                    id="jeda"
+                    aria-describedby="hint-jeda"
+                  />
+                </div>
+                <button class="action secondary" type="submit" id="save-timings">Simpan durasi</button>
+              </fieldset>
+            </form>
+          </details>
+        </section>
+      </div>
+      <section class="environment" aria-labelledby="environment-title">
+        <div class="env-header">
+          <h2 id="environment-title">Waktu &amp; cuaca</h2>
+          <span class="kicker" data-env="date">—</span>
+        </div>
+        <div class="env-layout">
+          <div class="weather-tile">
+            <svg class="icon weather-big" aria-hidden="true" viewbox="0 0 24 24">
+              <use data-weather-icon href="#i-cloud"></use>
+            </svg>
+            <div>
+              <div class="weather-place">
+                <span class="" data-env="city">Jakarta</span>
+                <span data-weather-province=""></span>
+              </div>
+              <strong><span class="" data-env="temp">—</span></strong>
+              <span class="" data-env="weather">Memuat cuaca…</span>
+            </div>
+            <div class="weather-credit">
+              <span class="" data-env="update">—</span>
+              ·
+              <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>
+            </div>
+          </div>
+          <div>
+            <div class="lokasi-cuaca">
+              <label>
+                Provinsi
+                <select id="province" disabled aria-label="Provinsi cuaca"></select>
+              </label>
+              <label>
+                Kota / kabupaten
+                <select id="city" disabled aria-label="Kota atau kabupaten cuaca"></select>
+              </label>
+            </div>
+            <span class="sky-label">Pencahayaan denah</span>
+            <div class="sky-picks" role="group" aria-label="Pilih suasana">
+              <button type="button" data-sky-choice="wib" aria-pressed="false" disabled>
+                <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                  <use href="#i-clock"></use>
+                </svg>
+                Ikuti WIB
+              </button>
+              <button type="button" data-sky-choice="pagi" aria-pressed="false" disabled>
+                <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                  <use href="#i-sunrise"></use>
+                </svg>
+                Pagi
+              </button>
+              <button type="button" data-sky-choice="siang" aria-pressed="false" disabled>
+                <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                  <use href="#i-sun"></use>
+                </svg>
+                Siang
+              </button>
+              <button type="button" data-sky-choice="sore" aria-pressed="false" disabled>
+                <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                  <use href="#i-sunset"></use>
+                </svg>
+                Sore
+              </button>
+              <button type="button" data-sky-choice="malam" aria-pressed="false" disabled>
+                <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                  <use href="#i-moon"></use>
+                </svg>
+                Malam
+              </button>
+            </div>
+            <p class="note">
+              <span class="" data-env="sky">—</span>
+              ·
+              <span class="" data-env="where">—</span>
+              . Jam tetap WIB.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <dialog
+      class="stop-dialog"
+      id="stop-dialog"
+      aria-labelledby="stop-title"
+      aria-describedby="stop-reason"
+    >
+      <h2 id="stop-title">Hentikan simulasi?</h2>
+      <p id="stop-reason"></p>
+      <p id="stop-error" role="status"></p>
+      <div class="stop-actions">
+        <button type="button" class="action secondary" id="cancel-stop" autofocus>Batal</button>
+        <button type="button" class="action primary" id="confirm-stop">
+          <svg class="icon" aria-hidden="true"><use href="#i-stop"></use></svg>
+          Hentikan simulasi
+        </button>
+      </div>
+    </dialog>
+    <footer>
+      <div class="wrap foot">
+        <p>© 2026 Yuda Wahyu Ramadhan · Portofolio teknik</p>
+        <a id="github" href="https://github.com/yuda2651-gif">
+          GitHub
+          <svg class="icon" aria-hidden="true"><use href="#i-diagonal"></use></svg>
+        </a>
+      </div>
+    </footer>
+    <script src="aset/grafis/ikon.js" defer></script>
+    <script src="aset/js/data.js" defer></script>
+    <script src="aset/js/siklus.js" defer></script>
+    <script src="aset/js/koneksi.js" defer></script>
+    <script src="aset/js/pencahayaan.js" defer></script>
+    <script src="aset/js/lingkungan.js" defer></script>
+    <script src="aset/js/navigasi.js" defer></script>
+    <script src="aset/js/kendali-peta.js" defer></script>
+    <script src="aset/js/pengaturan-hmi.js" defer></script>
+    <script src="aset/js/panel.js" defer></script>
+  </body>
+</html>

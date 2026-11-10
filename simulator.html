@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="simpang-mode" content="demo" />
+    <title>Simulator lalu lintas · Simpang</title>
+    <link rel="stylesheet" href="aset/css/font.css" />
+    <link rel="stylesheet" href="aset/css/dasar.css" />
+    <link rel="stylesheet" href="aset/css/panel.css" />
+    <link rel="stylesheet" href="aset/css/lingkungan.css" />
+    <link rel="stylesheet" href="aset/css/interaksi.css" />
+    <link rel="stylesheet" href="aset/css/navigasi.css" />
+    <link rel="canonical" href="https://yudawhyusimpang.my.id/simulator.html" />
+    <link rel="stylesheet" href="aset/css/kawasan.css" />
+  </head>
+  <body data-page="simulator">
+    <a class="skip" href="#utama">Lewati navigasi</a>
+    <svg
+      class="sprites"
+      aria-hidden="true"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs id="svg-defs"></defs>
+    </svg>
+    <header class="topbar">
+      <div class="wrap nav-wrap">
+        <a class="brand" href="index.html#beranda" aria-label="Simpang, kembali ke beranda">
+          <svg class="brand-mark" aria-hidden="true" viewbox="0 0 36 36">
+            <use href="#brand"></use>
+          </svg>
+          <span class="wordmark">Simpang</span>
+        </a>
+        <button
+          class="menu-button"
+          type="button"
+          id="menu-button"
+          aria-label="Buka menu"
+          aria-expanded="false"
+          aria-controls="menu-panel"
+        >
+          <svg class="icon" aria-hidden="true"><use href="#i-menu"></use></svg>
+        </button>
+        <div class="nav-panel" id="menu-panel">
+          <div class="nav-clip">
+            <nav aria-label="Navigasi utama">
+              <a href="index.html#beranda">Beranda</a>
+              <a href="simulator.html" aria-current="page">
+                <i class="dot" aria-hidden="true"></i>
+                Simulator
+              </a>
+              <a href="hmi.html">Panel Operator (HMI)</a>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="wrap" id="utama" tabindex="-1">
+      <header class="ops-head">
+        <div>
+          <h1>Simulator lalu lintas</h1>
+          <p>Pantau giliran lampu dan arus kendaraan di empat ruas jalan.</p>
+        </div>
+        <div class="top-context">
+          <span class="time-wib" data-env="clock">— WIB</span>
+          <span class="connection" aria-live="polite" id="connection">Menghubungkan…</span>
+        </div>
+      </header>
+      <div class="ops-grid sim-grid">
+        <figure class="sim-board">
+          <div class="atlas-slot" data-slot-peta="utama"></div>
+          <figcaption class="sim-cap">
+            <span>
+              <strong class="cap-label" data-inspect-label="">
+                Pilih nama jalan untuk melihat status.
+              </strong>
+            </span>
+            <button
+              id="enlarge"
+              class="tool tombol-denah-besar"
+              type="button"
+              title="Perbesar denah"
+              aria-label="Perbesar denah"
+            >
+              <svg class="icon" aria-hidden="true"><use href="#i-expand"></use></svg>
+              <span>Perbesar denah</span>
+            </button>
+          </figcaption>
+          <div data-slot-alat="utama">
+            <div id="alat-peta" class="atlas-tools" role="group" aria-label="Navigasi denah">
+              <div class="alat-baris">
+                <div class="alat-skala">
+                  <button
+                    type="button"
+                    aria-label="Perkecil skala denah"
+                    title="Perkecil"
+                    data-cam="out"
+                  >
+                    −
+                  </button>
+                  <output aria-label="Skala denah">100%</output>
+                  <button
+                    type="button"
+                    aria-label="Perbesar skala denah"
+                    title="Perbesar"
+                    data-cam="in"
+                  >
+                    +
+                  </button>
+                </div>
+                <button type="button" data-cam="pusat">Pusat simpang</button>
+                <button type="button" data-cam="semua">Seluruh kawasan</button>
+              </div>
+              <label class="alat-petak">
+                Jelajahi petak
+                <select aria-label="Jelajahi petak">
+                  <option value="">Pilih lokasi…</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div class="travel-key">
+            <span>
+              <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                <use href="#i-left"></use>
+              </svg>
+              Belok kiri langsung saat jalur bebas
+            </span>
+            <span>
+              <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                <use href="#i-right"></use>
+              </svg>
+              Belok kanan bergiliran
+            </span>
+            <span>
+              <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                <use href="#i-walk"></use>
+              </svg>
+              Zebra cross diprioritaskan
+            </span>
+            <span class="pju-status">
+              <i aria-hidden="true"></i>
+              <span data-status-pju="">Lampu jalan</span>
+            </span>
+          </div>
+          <p class="atlas-help">
+            Seret peta dengan mouse. Pilih lokasi untuk langsung menuju petaknya.
+          </p>
+        </figure>
+        <aside class="pane phase-side" aria-label="Status persimpangan">
+          <span class="kicker">Fase aktif</span>
+          <div class="signal-summary">
+            <i class="state-dot" id="state-dot" aria-hidden="true"></i>
+            <strong class="phase-title" id="phase-label" aria-live="polite">
+              Menunggu data
+            </strong>
+            <span class="run-state" id="run-state">Menunggu data</span>
+          </div>
+          <div class="clock-small" role="timer" aria-live="off">
+            <span id="count">—</span>
+            <small id="unit-count">detik tersisa</small>
+          </div>
+          <span id="ped-state" class="kicker"></span>
+          <h2 class="lane-title">Lampu per jalan</h2>
+          <ul class="lanes">
+            <li data-lane="U" class="row-pilih">
+              <button
+                class="aksi-ruas"
+                type="button"
+                data-baris-jalan="U"
+                aria-pressed="false"
+                aria-label="Lihat status Jl. Kenanga"
+              ></button>
+              <span class="direction" aria-hidden="true">U</span>
+              <div>
+                <strong class="lane-name">Jl. Kenanga</strong>
+                <small>Utara</small>
+              </div>
+              <span class="lane-color">—</span>
+            </li>
+            <li data-lane="T" class="row-pilih">
+              <button
+                class="aksi-ruas"
+                type="button"
+                data-baris-jalan="T"
+                aria-pressed="false"
+                aria-label="Lihat status Jl. Angsana"
+              ></button>
+              <span class="direction" aria-hidden="true">T</span>
+              <div>
+                <strong class="lane-name">Jl. Angsana</strong>
+                <small>Timur</small>
+              </div>
+              <span class="lane-color">—</span>
+            </li>
+            <li data-lane="S" class="row-pilih">
+              <button
+                class="aksi-ruas"
+                type="button"
+                data-baris-jalan="S"
+                aria-pressed="false"
+                aria-label="Lihat status Jl. Tanjung"
+              ></button>
+              <span class="direction" aria-hidden="true">S</span>
+              <div>
+                <strong class="lane-name">Jl. Tanjung</strong>
+                <small>Selatan</small>
+              </div>
+              <span class="lane-color">—</span>
+            </li>
+            <li data-lane="B" class="row-pilih">
+              <button
+                class="aksi-ruas"
+                type="button"
+                data-baris-jalan="B"
+                aria-pressed="false"
+                aria-label="Lihat status Jl. Cempaka"
+              ></button>
+              <span class="direction" aria-hidden="true">B</span>
+              <div>
+                <strong class="lane-name">Jl. Cempaka</strong>
+                <small>Barat</small>
+              </div>
+              <span class="lane-color">—</span>
+            </li>
+          </ul>
+          <a
+            class="page-link"
+            href="hmi.html"
+            target="_blank"
+            rel="noopener"
+            aria-label="Buka HMI di tab baru"
+          >
+            Buka HMI
+            <svg class="icon" aria-hidden="true"><use href="#i-diagonal"></use></svg>
+          </a>
+          <div class="quick-env">
+            <span class="ambient-compact">
+              <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                <use data-weather-icon href="#i-sun"></use>
+              </svg>
+              <span class="" data-env="city">Jakarta</span>
+              ·
+              <span class="" data-env="temp">—</span>
+              <span class="" data-env="weather">Memuat cuaca…</span>
+            </span>
+            <span>
+              <span class="" data-env="sky">—</span>
+              ·
+              <span class="" data-env="where">—</span>
+            </span>
+            <span class="weather-credit">
+              <span class="" data-env="update">—</span>
+              ·
+              <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>
+            </span>
+          </div>
+        </aside>
+      </div>
+    </main>
+    <footer>
+      <div class="wrap foot">
+        <p>© 2026 Yuda Wahyu Ramadhan · Portofolio teknik</p>
+        <a id="github" href="https://github.com/yuda2651-gif">
+          GitHub
+          <svg class="icon" aria-hidden="true"><use href="#i-diagonal"></use></svg>
+        </a>
+      </div>
+    </footer>
+    <dialog id="map-dialog" class="atlas-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-bar">
+        <div>
+          <h2 id="dialog-title">Denah kawasan</h2>
+          <span class="dialog-info" data-inspect-label="">Empat kawasan · 16 petak</span>
+        </div>
+        <div class="dialog-tools">
+          <button
+            type="button"
+            class="tool tutup-atlas"
+            id="close-dialog"
+            aria-label="Tutup denah"
+          >
+            <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+              <use href="#i-close"></use>
+            </svg>
+            <span>Tutup</span>
+          </button>
+        </div>
+      </div>
+      <div class="atlas-slot" data-slot-peta="besar"></div>
+      <div data-slot-alat="besar"></div>
+    </dialog>
+    <template id="hiasan-denah">
+      <svg class="compass" aria-label="Arah utara" role="img" viewbox="0 0 38 48">
+        <text x="25" y="10" font-family="var(--mono)" font-size="10" fill="currentColor">
+          U
+        </text>
+        <path
+          d="m6 34 22-17-13 23 1-12z"
+          fill="var(--paper)"
+          stroke="currentColor"
+          stroke-width="1.2"
+        ></path>
+        <path d="m6 34 22-17-12 11z" fill="currentColor"></path>
+      </svg>
+    </template>
+    <template id="hit-jalan">
+      <g class="lapisan-inspeksi">
+        <g
+          data-peta-jalan="U"
+          role="button"
+          tabindex="0"
+          aria-pressed="false"
+          aria-label="Lihat Utara, Jl. Kenanga"
+        >
+          <polygon
+            class="bidang-pilih"
+            points="634.6,148.4 556.6,191.6 598.9,215.0 676.9,171.8"
+          ></polygon>
+          <rect class="tepi-label" x="652" y="96" width="143" height="29" rx="7"></rect>
+        </g>
+        <g
+          data-peta-jalan="T"
+          role="button"
+          tabindex="0"
+          aria-pressed="false"
+          aria-label="Lihat Timur, Jl. Angsana"
+        >
+          <polygon
+            class="bidang-pilih"
+            points="630.8,361.6 552.8,318.5 510.5,341.9 588.5,385.0"
+          ></polygon>
+          <rect class="tepi-label" x="652" y="382" width="143" height="29" rx="7"></rect>
+        </g>
+        <g
+          data-peta-jalan="S"
+          role="button"
+          tabindex="0"
+          aria-pressed="false"
+          aria-label="Lihat Selatan, Jl. Tanjung"
+        >
+          <polygon
+            class="bidang-pilih"
+            points="245.4,359.6 323.4,316.4 281.1,293.0 203.1,336.2"
+          ></polygon>
+          <rect class="tepi-label" x="85" y="382" width="143" height="29" rx="7"></rect>
+        </g>
+        <g
+          data-peta-jalan="B"
+          role="button"
+          tabindex="0"
+          aria-pressed="false"
+          aria-label="Lihat Barat, Jl. Cempaka"
+        >
+          <polygon
+            class="bidang-pilih"
+            points="249.2,146.4 327.2,189.5 369.5,166.1 291.5,123.0"
+          ></polygon>
+          <rect class="tepi-label" x="85" y="96" width="143" height="29" rx="7"></rect>
+        </g>
+      </g>
+    </template>
+    <script src="aset/grafis/ikon.js" defer></script>
+    <script src="aset/grafis/denah.js" defer></script>
+    <script src="aset/grafis/kawasan.js" defer></script>
+    <script src="aset/js/data.js" defer></script>
+    <script src="aset/js/siklus.js" defer></script>
+    <script src="aset/js/koneksi.js" defer></script>
+    <script src="aset/js/pencahayaan.js" defer></script>
+    <script src="aset/js/lingkungan.js" defer></script>
+    <script src="aset/js/navigasi.js" defer></script>
+    <script src="aset/js/kendaraan.js" defer></script>
+    <script src="aset/js/lapisan-kawasan.js" defer></script>
+    <script src="aset/js/peta-kawasan.js" defer></script>
+    <script src="aset/js/jadwal-gambar.js" defer></script>
+    <script src="aset/js/lalu-lintas.js" defer></script>
+    <script src="aset/js/kendali-peta.js" defer></script>
+    <script src="aset/js/panel.js" defer></script>
+  </body>
+</html>

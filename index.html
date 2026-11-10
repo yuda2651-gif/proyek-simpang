@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="simpang-mode" content="demo" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Portofolio proyek IoT: pratinjau simpang empat Indonesia, simulator lampu lalu lintas, dan panel operator."
+    />
+    <title>Simpang — Simulator Lampu Lalu Lintas</title>
+    <link rel="stylesheet" href="aset/css/font.css" />
+    <link rel="stylesheet" href="aset/css/dasar.css" />
+    <link rel="stylesheet" href="aset/css/panel.css" />
+    <link rel="stylesheet" href="aset/css/lingkungan.css" />
+    <link rel="stylesheet" href="aset/css/interaksi.css" />
+    <link rel="stylesheet" href="aset/css/navigasi.css" />
+    <link rel="canonical" href="https://yudawhyusimpang.my.id/" />
+    <link rel="stylesheet" href="aset/css/kawasan.css" />
+  </head>
+  <body id="beranda" data-page="beranda">
+    <a class="skip" href="#utama">Lewati navigasi</a>
+    <svg
+      class="sprites"
+      aria-hidden="true"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs id="svg-defs"></defs>
+    </svg>
+    <header class="topbar">
+      <div class="wrap nav-wrap">
+        <a class="brand" href="index.html#beranda" aria-label="Simpang, kembali ke beranda">
+          <svg class="brand-mark" aria-hidden="true" viewbox="0 0 36 36">
+            <use href="#brand"></use>
+          </svg>
+          <span class="wordmark">Simpang</span>
+        </a>
+        <button
+          class="menu-button"
+          type="button"
+          id="menu-button"
+          aria-label="Buka menu"
+          aria-expanded="false"
+          aria-controls="menu-panel"
+        >
+          <svg class="icon" aria-hidden="true"><use href="#i-menu"></use></svg>
+        </button>
+        <div class="nav-panel" id="menu-panel">
+          <div class="nav-clip">
+            <nav aria-label="Navigasi utama">
+              <a href="index.html#beranda" aria-current="page">Beranda</a>
+              <a href="simulator.html">
+                <i class="dot" aria-hidden="true"></i>
+                Simulator
+              </a>
+              <a href="hmi.html">Panel Operator (HMI)</a>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="utama" tabindex="-1">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="wrap hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow">Portofolio teknik / IoT</div>
+            <h1 id="hero-title">
+              <span>Satu simpang,</span>
+              <em>empat arah.</em>
+            </h1>
+            <p>
+              Amati lampu lalu lintas di perempatan kampung dan atur giliran tiap arah melalui
+              panel operator.
+            </p>
+            <div class="actions">
+              <a class="action primary" href="simulator.html">
+                Buka Simulator
+                <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg>
+              </a>
+              <a class="action secondary" href="hmi.html">
+                Buka Panel Operator
+                <svg class="icon" aria-hidden="true"><use href="#i-panel"></use></svg>
+              </a>
+            </div>
+            <a
+              class="domain"
+              aria-label="Domain proyek yudawhyusimpang.my.id"
+              href="https://yudawhyusimpang.my.id/"
+            >
+              <i class="dot" aria-hidden="true"></i>
+              yudawhyusimpang.my.id
+            </a>
+          </div>
+          <figure class="board" aria-label="Pratinjau lokal simulator">
+            <div class="atlas-slot" data-slot-peta="utama"></div>
+            <figcaption class="figure-bar">
+              <div class="phase-readout">
+                <i id="phase-dot" class="phase-dot" aria-hidden="true"></i>
+                <span id="fase">Menunggu data</span>
+                <span id="waktu" class="time">12 dtk</span>
+              </div>
+              <div class="figure-actions">
+                <button
+                  class="tool motion-control"
+                  type="button"
+                  aria-label="Jeda pratinjau"
+                  title="Jeda pratinjau"
+                >
+                  <svg class="icon" aria-hidden="true"><use href="#i-pause"></use></svg>
+                </button>
+                <button
+                  class="tool"
+                  id="enlarge"
+                  aria-label="Perbesar denah"
+                  title="Perbesar denah"
+                  type="button"
+                >
+                  <svg class="icon" aria-hidden="true"><use href="#i-expand"></use></svg>
+                </button>
+              </div>
+            </figcaption>
+            <div data-slot-alat="utama">
+              <div id="alat-peta" class="atlas-tools" role="group" aria-label="Navigasi denah">
+                <div class="alat-baris">
+                  <div class="alat-skala">
+                    <button
+                      type="button"
+                      aria-label="Perkecil skala denah"
+                      title="Perkecil"
+                      data-cam="out"
+                    >
+                      −
+                    </button>
+                    <output aria-label="Skala denah">100%</output>
+                    <button
+                      type="button"
+                      aria-label="Perbesar skala denah"
+                      title="Perbesar"
+                      data-cam="in"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <button type="button" data-cam="pusat">Pusat simpang</button>
+                  <button type="button" data-cam="semua">Seluruh kawasan</button>
+                </div>
+                <label class="alat-petak">
+                  Jelajahi petak
+                  <select aria-label="Jelajahi petak">
+                    <option value="">Pilih lokasi…</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div class="home-ambient">
+              <span class="time-wib" data-env="clock">— WIB</span>
+              <span class="ambient-compact">
+                <span class="ambient-compact">
+                  <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+                    <use data-weather-icon href="#i-sun"></use>
+                  </svg>
+                  <span class="" data-env="city">Jakarta</span>
+                  ·
+                  <span class="" data-env="temp">—</span>
+                  <span class="" data-env="weather">Memuat cuaca…</span>
+                </span>
+                ·
+                <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>
+              </span>
+            </div>
+          </figure>
+        </div>
+      </section>
+
+      <section class="wrap projects" aria-labelledby="project-title">
+        <div class="section-top"><h2 id="project-title">Jelajahi proyek</h2></div>
+        <div class="cards">
+          <a class="card reveal" href="simulator.html" aria-labelledby="sim-name">
+            <div class="preview preview-map" aria-hidden="true">
+              <canvas
+                data-thumbnail-peta=""
+                width="640"
+                height="210"
+                aria-hidden="true"
+              ></canvas>
+            </div>
+            <div class="card-body">
+              <span class="filename">simulator.html</span>
+              <h3 id="sim-name">Simulator Lampu Lalu Lintas</h3>
+              <span class="link-disc" aria-hidden="true">
+                <svg class="icon"><use href="#i-diagonal"></use></svg>
+              </span>
+              <p>Ikuti kendaraan yang berbelok dan pejalan kaki yang menyeberang.</p>
+            </div>
+          </a>
+          <a class="card reveal" href="hmi.html" aria-labelledby="hmi-name">
+            <div class="preview preview-hmi" aria-hidden="true">
+              <div class="mini">
+                <div class="mini-head">
+                  <span>
+                    <i class="screw"></i>
+                    PANEL OPERATOR
+                  </span>
+                  <i class="screw"></i>
+                </div>
+                <div class="mini-row">
+                  <div class="mini-signals">
+                    <div class="mini-signal">
+                      U
+                      <span class="light-strip" data-mini="U">
+                        <b></b>
+                        <b></b>
+                        <b></b>
+                      </span>
+                    </div>
+                    <div class="mini-signal">
+                      T
+                      <span class="light-strip" data-mini="T">
+                        <b></b>
+                        <b></b>
+                        <b></b>
+                      </span>
+                    </div>
+                    <div class="mini-signal">
+                      S
+                      <span class="light-strip" data-mini="S">
+                        <b></b>
+                        <b></b>
+                        <b></b>
+                      </span>
+                    </div>
+                    <div class="mini-signal">
+                      B
+                      <span class="light-strip" data-mini="B">
+                        <b></b>
+                        <b></b>
+                        <b></b>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="mini-controls">
+                    <strong id="mini-time">12 dtk</strong>
+                    <div>
+                      <span class="mini-key">Mulai</span>
+                      <span class="mini-key">Hentikan</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <span class="filename">hmi.html</span>
+              <h3 id="hmi-name">Panel Operator (HMI)</h3>
+              <span class="link-disc" aria-hidden="true">
+                <svg class="icon"><use href="#i-diagonal"></use></svg>
+              </span>
+              <p>Pilih siklus otomatis atau beri giliran secara manual.</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="workflow" aria-labelledby="flow-title">
+        <div class="wrap">
+          <div class="section-top">
+            <h2 id="flow-title">Cara kerjanya</h2>
+            <div class="flow-legend">
+              <span>
+                <i aria-hidden="true"></i>
+                Akses web
+              </span>
+              <span>
+                <i aria-hidden="true"></i>
+                Pengiriman kode
+              </span>
+            </div>
+          </div>
+          <div class="flow reveal">
+            <svg
+              aria-hidden="true"
+              class="flow-lines desktop-lines"
+              viewbox="0 0 1000 82"
+              preserveaspectratio="none"
+            >
+              <defs>
+                <marker
+                  id="arrowline"
+                  viewbox="0 0 8 8"
+                  refx="7"
+                  refy="4"
+                  markerwidth="6"
+                  markerheight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path class="head" d="m0 0 8 4-8 4z"></path>
+                </marker>
+              </defs>
+              <path d="M100 52H273" marker-end="url(#arrowline)"></path>
+              <path
+                d="M300 30V16Q300 9 309 9H690Q700 9 700 18V28"
+                marker-end="url(#arrowline)"
+              ></path>
+              <path d="M522 52H673" stroke-dasharray="4 5" marker-end="url(#arrowline)"></path>
+              <path d="M720 52H873" marker-end="url(#arrowline)"></path>
+            </svg>
+            <svg
+              aria-hidden="true"
+              class="flow-lines mobile-lines"
+              viewbox="0 0 72 400"
+              preserveaspectratio="none"
+            >
+              <defs>
+                <marker
+                  id="arrowvertical"
+                  viewbox="0 0 8 8"
+                  refx="7"
+                  refy="4"
+                  markerwidth="6"
+                  markerheight="6"
+                  orient="auto"
+                >
+                  <path class="head" d="m0 0 8 4-8 4z"></path>
+                </marker>
+              </defs>
+              <path d="M44 59V97" marker-end="url(#arrowvertical)"></path>
+              <path
+                d="M24 120H13Q8 120 8 126V274Q8 280 14 280H22"
+                marker-end="url(#arrowvertical)"
+              ></path>
+              <path
+                d="M44 222V257"
+                stroke-dasharray="4 5"
+                marker-end="url(#arrowvertical)"
+              ></path>
+              <path d="M44 301V337" marker-end="url(#arrowvertical)"></path>
+            </svg>
+            <div class="node">
+              <span class="node-icon">
+                <svg class="icon" aria-hidden="true"><use href="#i-globe"></use></svg>
+              </span>
+              <div>
+                <strong>Domain .my.id</strong>
+                <small>Alamat proyek</small>
+              </div>
+            </div>
+            <div class="node">
+              <span class="node-icon">
+                <svg class="icon" aria-hidden="true"><use href="#i-cloud"></use></svg>
+              </span>
+              <div>
+                <strong>Cloudflare</strong>
+                <small>DNS &amp; Tunnel</small>
+              </div>
+            </div>
+            <div class="node">
+              <span class="node-icon">
+                <svg class="icon" aria-hidden="true"><use href="#i-repo"></use></svg>
+              </span>
+              <div>
+                <strong>GitHub</strong>
+                <small>Repositori kode</small>
+              </div>
+            </div>
+            <div class="node">
+              <span class="node-icon">
+                <svg class="icon" aria-hidden="true"><use href="#i-server"></use></svg>
+              </span>
+              <div>
+                <strong>Linux / Termux</strong>
+                <small>Server pengendali</small>
+              </div>
+            </div>
+            <div class="node">
+              <span class="node-icon">
+                <svg class="icon" aria-hidden="true"><use href="#i-screens"></use></svg>
+              </span>
+              <div>
+                <strong>Simulator &amp; HMI</strong>
+                <small>Dua tampilan web</small>
+              </div>
+            </div>
+          </div>
+          <p class="flow-note">
+            Pada rancangan proyek, domain mengarah ke server lewat Cloudflare Tunnel. Server
+            menjalankan kode dari GitHub dan membagikan kondisi lampu yang sama ke simulator dan
+            HMI.
+          </p>
+        </div>
+      </section>
+      <section class="wrap stack" aria-labelledby="stack-title">
+        <h2 id="stack-title">Stack proyek</h2>
+        <ul class="tags">
+          <li>HTML</li>
+          <li>CSS</li>
+          <li>JavaScript</li>
+          <li>SVG</li>
+          <li>GitHub</li>
+          <li>Cloudflare</li>
+          <li>Linux / Termux</li>
+        </ul>
+      </section>
+    </main>
+    <footer>
+      <div class="wrap foot">
+        <p>© 2026 Yuda Wahyu Ramadhan · Portofolio teknik</p>
+        <a id="github" href="https://github.com/yuda2651-gif">
+          GitHub
+          <svg class="icon" aria-hidden="true"><use href="#i-diagonal"></use></svg>
+        </a>
+      </div>
+    </footer>
+    <dialog id="map-dialog" class="atlas-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-bar">
+        <div>
+          <h2 id="dialog-title">Denah kawasan</h2>
+          <span class="dialog-info" data-inspect-label="">Empat kawasan · 16 petak</span>
+        </div>
+        <div class="dialog-tools">
+          <button
+            type="button"
+            class="tool motion-control"
+            aria-label="Jeda tampilan"
+            title="Jeda tampilan"
+          >
+            <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+              <use href="#i-pause"></use>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="tool tutup-atlas"
+            id="close-dialog"
+            aria-label="Tutup denah"
+          >
+            <svg class="icon" aria-hidden="true" viewbox="0 0 24 24">
+              <use href="#i-close"></use>
+            </svg>
+            <span>Tutup</span>
+          </button>
+        </div>
+      </div>
+      <div class="atlas-slot" data-slot-peta="besar"></div>
+      <div data-slot-alat="besar"></div>
+    </dialog>
+    <template id="hiasan-denah">
+      <div class="map-hud">
+        <svg class="icon" aria-hidden="true"><use href="#i-map"></use></svg>
+        <span id="home-label">Pratinjau lokal</span>
+      </div>
+      <svg class="compass" aria-label="Arah utara" role="img" viewbox="0 0 38 48">
+        <text x="25" y="10" font-family="var(--mono)" font-size="10" fill="currentColor">
+          U
+        </text>
+        <path
+          d="m6 34 22-17-13 23 1-12z"
+          fill="var(--paper)"
+          stroke="currentColor"
+          stroke-width="1.2"
+        ></path>
+        <path d="m6 34 22-17-12 11z" fill="currentColor"></path>
+      </svg>
+    </template>
+    <script src="aset/grafis/ikon.js" defer></script>
+    <script src="aset/grafis/denah.js" defer></script>
+    <script src="aset/grafis/kawasan.js" defer></script>
+    <script src="aset/js/data.js" defer></script>
+    <script src="aset/js/siklus.js" defer></script>
+    <script src="aset/js/koneksi.js" defer></script>
+    <script src="aset/js/pencahayaan.js" defer></script>
+    <script src="aset/js/lingkungan.js" defer></script>
+    <script src="aset/js/navigasi.js" defer></script>
+    <script src="aset/js/kendaraan.js" defer></script>
+    <script src="aset/js/lapisan-kawasan.js" defer></script>
+    <script src="aset/js/peta-kawasan.js" defer></script>
+    <script src="aset/js/jadwal-gambar.js" defer></script>
+    <script src="aset/js/lalu-lintas.js" defer></script>
+    <script src="aset/js/beranda.js" defer></script>
+  </body>
+</html>
